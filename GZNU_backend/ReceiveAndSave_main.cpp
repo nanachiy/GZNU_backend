@@ -1,4 +1,7 @@
-//1.Programe1:读取UDP数据并存储 参数1：循环条数 参数2：
+// Copyright (c) 2025 陈中旭
+// License MIT
+// Author: nanachiy(393744534@qq.com)
+// Receive about 2GiBps UDP stream from certain IP and Port, save to certain path.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,19 +16,18 @@
 #include <unistd.h>
 #include <iostream>
 
-// #define UDP_IP "10.17.16.12"
-// #define UDP_PORT 17201
 #define BUFFER_SIZE 8256
 #define BATCH_SIZE 1000
-// #define FILE_PATH "storage.bin_"
 
-std::queue<char*> data_queue;
+std::queue<char*> data_queue;       
 bool shutdown_flag = false;
-// int n_write = 250*60*5;
 char batch[BUFFER_SIZE*BATCH_SIZE];
 int size_file = 2500;
 
+// Receive UDP stream from UDP_IP and UDP_PORT, and put data
+// in the data_queue.
 void udp_receiver(int n_write, char *UDP_IP, int UDP_PORT) {
+    // Initialising socket
     int sockfd;
     struct sockaddr_in server_addr, client_addr;
     socklen_t client_addr_len = sizeof(client_addr);
@@ -44,7 +46,8 @@ void udp_receiver(int n_write, char *UDP_IP, int UDP_PORT) {
         close(sockfd);
     }
 
-    for (int i = 0; i < n_write; i++) {  // 持续接收，可通过Ctrl+C终止
+    // Put packets in buffer, put buffer in data_queue when it's full.
+    for (int i = 0; i < n_write; i++) {
         char* buffer = new char[BUFFER_SIZE*BATCH_SIZE];
         for(int j = 0; j < BATCH_SIZE; j++){
             recvfrom(sockfd, &buffer[BUFFER_SIZE*j], BUFFER_SIZE, 0,
@@ -56,18 +59,14 @@ void udp_receiver(int n_write, char *UDP_IP, int UDP_PORT) {
     shutdown_flag = true;
 }
 
-
+// Get data from data_queue and write into file.
 void file_writer(int n_file, const char *FILE_PATH) {
+    // Initialize file
     std::string filename_s = FILE_PATH + std::to_string(n_file);
     const char *filename = filename_s.c_str();
-
-    // printf("%s", filename);
     FILE *output_file = fopen(filename, "wb");
 
-    // if (!output_file) {
-    //     perror("fopen failed");
-    // }
-
+    // Write into file until it's full.
     int i_write = 0;
     while (i_write < size_file && (!data_queue.empty() || !shutdown_flag)){
         if(!data_queue.empty()){
