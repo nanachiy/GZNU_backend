@@ -30,13 +30,13 @@ N_raw = 128
 N_fft = 2048
 N_time = 1024
 N_fre_channel = N_fft//2
-N_acc = 10
+# N_acc = 10
 i_file = 0
 spec_shape = str(N_fft//2) + 'B'
 spec_shape_2 = str(N_fft//2) + 'b'
 len_header = 8
 specrtrum_power_result = np.empty((N_raw, N_time, 4, N_fre_channel, 1), dtype='uint8')
-n_spec_per_fits = 128*N_time*N_acc//2
+n_spec_per_fits = 128*N_time//2
 n_spec = n_spec_per_fits*1
 
 
@@ -62,7 +62,7 @@ def fits_writer():
 
 def write_file():
     global i_file
-    spectrum_acc = np.empty((N_acc, 4, N_fre_channel), dtype='uint8')
+    # spectrum_acc = np.empty((N_acc, 4, N_fre_channel), dtype='uint8')
     i_acc = 0
     i_raw = 0
     i_time = 0
@@ -72,32 +72,43 @@ def write_file():
             continue
 
         pkt = data_queue.get()
-        spectrum_acc[i_acc % N_acc, 0, :] = struct.unpack(spec_shape, pkt[len_header: len_header+N_fre_channel])
-        spectrum_acc[i_acc % N_acc, 1, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel: len_header+N_fre_channel*2])
-        spectrum_acc[i_acc % N_acc, 2, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*2: len_header+N_fre_channel*3])).astype('uint8')
-        spectrum_acc[i_acc % N_acc, 3, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*3: len_header+N_fre_channel*4])).astype('uint8')
-        i_acc += 1
-        # print(f"[write_file] i_acc = {i_acc}")
-        spectrum_acc[i_acc % N_acc, 0, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel*4: len_header+N_fre_channel*5])
-        spectrum_acc[i_acc % N_acc, 1, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel*5: len_header+N_fre_channel*6])
-        spectrum_acc[i_acc % N_acc, 2, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*6: len_header+N_fre_channel*7])).astype('uint8')
-        spectrum_acc[i_acc % N_acc, 3, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*7: len_header+N_fre_channel*8])).astype('uint8')
-        i_acc += 1
+        # spectrum_acc[i_acc % N_acc, 0, :] = struct.unpack(spec_shape, pkt[len_header: len_header+N_fre_channel])
+        # spectrum_acc[i_acc % N_acc, 1, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel: len_header+N_fre_channel*2])
+        # spectrum_acc[i_acc % N_acc, 2, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*2: len_header+N_fre_channel*3])).astype('uint8')
+        # spectrum_acc[i_acc % N_acc, 3, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*3: len_header+N_fre_channel*4])).astype('uint8')
+        # i_acc += 1
+        # # print(f"[write_file] i_acc = {i_acc}")
+        # spectrum_acc[i_acc % N_acc, 0, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel*4: len_header+N_fre_channel*5])
+        # spectrum_acc[i_acc % N_acc, 1, :] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel*5: len_header+N_fre_channel*6])
+        # spectrum_acc[i_acc % N_acc, 2, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*6: len_header+N_fre_channel*7])).astype('uint8')
+        # spectrum_acc[i_acc % N_acc, 3, :] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*7: len_header+N_fre_channel*8])).astype('uint8')
+        # i_acc += 1
         # print(f"[write_file] i_acc = {i_acc}")
     
-        if i_acc % N_acc == 0:
-            specrtrum_power_result[i_raw % N_raw, i_time % N_time, :, :, 0] = np.mean(spectrum_acc, axis=0)
+        # if i_acc % N_acc == 0:
+        #     specrtrum_power_result[i_raw % N_raw, i_time % N_time, :, :, 0] = np.mean(spectrum_acc, axis=0)
             # print(f"[write_file] i_time = {i_time}")
-            i_time += 1
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 0, :, 0] = struct.unpack(spec_shape, pkt[len_header: len_header+N_fre_channel])
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 1, :, 0] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel: len_header+N_fre_channel*2])
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 2, :, 0] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*2: len_header+N_fre_channel*3])).astype('uint8')
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 3, :, 0] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*3: len_header+N_fre_channel*4])).astype('uint8')
+        i_time += 1
 
-            if i_time % N_time == 0:
-                print(f"[write_file] i_raw = {i_raw}")
-                i_raw += 1
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 0, :, 0] = struct.unpack(spec_shape, pkt[len_header: len_header+N_fre_channel])
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 1, :, 0] = struct.unpack(spec_shape, pkt[len_header+N_fre_channel: len_header+N_fre_channel*2])
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 2, :, 0] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*2: len_header+N_fre_channel*3])).astype('uint8')
+        specrtrum_power_result[i_raw % N_raw, i_time % N_time, 3, :, 0] = np.abs(struct.unpack(spec_shape_2, pkt[len_header+N_fre_channel*3: len_header+N_fre_channel*4])).astype('uint8')
+        i_time += 1
 
-                if i_raw % N_raw == 0:
-                    fits_writer()
-                    print(f"[write_file] i_file = {i_file}")
-                    i_file +=  1
+        if i_time % N_time == 0:
+            print(f"[write_file] i_raw = {i_raw}")
+            i_raw += 1
+
+            if i_raw % N_raw == 0:
+                fits_writer()
+                print(f"[write_file] i_file = {i_file}")
+                i_file +=  1
+
 
 if __name__ == '__main__':
     time_1 = time.perf_counter()
