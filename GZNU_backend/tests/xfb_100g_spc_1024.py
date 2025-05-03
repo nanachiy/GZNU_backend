@@ -1,4 +1,11 @@
 #! /usr/bin/python
+# coding: utf-8
+# Copyright (c) 2025 陈中旭
+# License MIT
+# Date: 2025.05.03
+# Author: nanachiy(393744534@qq.com)
+# Receive spectrums from FPGA block and plot, about 500MiB.
+
 import socket,pylab,matplotlib,math,array,numpy
 matplotlib.use('tkagg')
 import struct
@@ -9,9 +16,7 @@ import numpy as np
 bw=1024
 name=['AA','BB','CR','CI']
 
-
 fftnum=1024
-
 fftnum1=1024
 
 def get_data():

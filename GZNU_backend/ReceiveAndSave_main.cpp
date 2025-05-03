@@ -1,5 +1,6 @@
 // Copyright (c) 2025 陈中旭
 // License MIT
+// Date: 2025.05.03
 // Author: nanachiy(393744534@qq.com)
 // Receive about 2GiBps UDP stream from certain IP and Port, save to certain path.
 
@@ -81,6 +82,7 @@ void file_writer(int n_file, const char *FILE_PATH) {
 
 
 int main(int argc, char *argv[]) {
+    // Calculate time use
     clock_t start, end;
     double time_used;
     start = clock();
@@ -90,14 +92,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    // Get parameters
     int n_file = 0;
     int n_write = atoi(argv[1]);
     char *FILE_PATH = argv[2];
     char *UDP_IP = argv[3];
     int UDP_PORT = atoi(argv[4]);
 
+    // Start writer_thread and receiver_thread
     while(!shutdown_flag || !data_queue.empty()){
-
         std::thread writer_thread(file_writer, n_file, FILE_PATH);
         if(n_file == 0){
             std::thread receiver_thread(udp_receiver, n_write, UDP_IP, UDP_PORT);
@@ -109,7 +112,7 @@ int main(int argc, char *argv[]) {
         ++ n_file;
     }
 
-
+    // Main program is finished
     printf("[Main] All threads stopped\n");
     end = clock();
 

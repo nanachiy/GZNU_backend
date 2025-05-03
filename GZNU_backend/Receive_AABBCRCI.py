@@ -1,10 +1,10 @@
 #!/media/hero/Intel6/anaconda3/bin/python
-
-"""
-FFT with datas in files, return fits fomat data.
-Email: 393744534@qq.com
-Author: Chen Zhongxu
-"""
+# coding: utf-8
+# Copyright (c) 2025 陈中旭
+# License MIT
+# Date: 2025.05.03
+# Author: nanachiy(393744534@qq.com)
+# Receive spectrums from FPGA block and write to FITS files, about 500MiB.
 
 import numpy as np
 from astropy.io import fits
@@ -17,7 +17,7 @@ import time
 import socket
 import struct
 
-# config: files
+# config: FITS files
 data_queue = multiprocessing.Queue()
 shutdown_flag = False
 IP = '10.17.16.12' #bind on all IP addresses
@@ -25,12 +25,11 @@ PORT = 17200
 example_path = 'fits_example_8bit_2048MHz_2048FFT.fits'
 path_fits = 'spectrum_fits_3/'
 
-# config: fits file
+# config: FFT
 N_raw = 128
 N_fft = 2048
 N_time = 1024
 N_fre_channel = N_fft//2
-# N_acc = 10
 i_file = 0
 spec_shape = str(N_fft//2) + 'B'
 spec_shape_2 = str(N_fft//2) + 'b'
