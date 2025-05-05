@@ -1,5 +1,5 @@
 # coding: utf-8
-# Copyright (c) 2025 陈中旭
+# Copyright (c) 2025 nanachiy
 # License MIT
 # Date: 2025.05.03
 # Author: nanachiy(393744534@qq.com)

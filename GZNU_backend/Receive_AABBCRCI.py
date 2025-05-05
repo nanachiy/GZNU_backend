@@ -1,6 +1,6 @@
 #!/media/hero/Intel6/anaconda3/bin/python
 # coding: utf-8
-# Copyright (c) 2025 陈中旭
+# Copyright (c) 2025 nanachiy
 # License MIT
 # Date: 2025.05.03
 # Author: nanachiy(393744534@qq.com)
@@ -8,19 +8,15 @@
 
 import numpy as np
 from astropy.io import fits
-import os
-import struct
-import fits_config
 import time
 import multiprocessing
-import time
 import socket
 import struct
 
 # config: FITS files
 data_queue = multiprocessing.Queue()
 shutdown_flag = False
-IP = '10.17.16.12' #bind on all IP addresses
+IP = '10.17.16.12' # bind on all IP addresses
 PORT = 17200
 example_path = 'fits_example_8bit_2048MHz_2048FFT.fits'
 path_fits = 'spectrum_fits_3/'
