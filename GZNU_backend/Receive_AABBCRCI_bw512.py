@@ -1,10 +1,10 @@
 #!/media/hero/Intel6/anaconda3/bin/python
-
-"""
-FFT with datas in files, return fits fomat data.
-Email: 393744534@qq.com
-Author: Chen Zhongxu
-"""
+# coding: utf-8
+# Copyright (c) 2025 nanachiy
+# License MIT
+# Date: 2025.05.03
+# Author: nanachiy(393744534@qq.com)
+# Receive spectrums from FPGA block and write to FITS files, about 500MiB.
 
 import numpy as np
 from astropy.io import fits
